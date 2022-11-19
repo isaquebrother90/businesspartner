@@ -1,6 +1,7 @@
 package br.com.businesspart.app.dtos;
 
-import br.com.businesspart.app.entities.BusinessPartnerEntity;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,28 +9,28 @@ import lombok.Setter;
 import javax.validation.constraints.NotEmpty;
 
 @Getter
+@Setter
 @NoArgsConstructor
-public class BusinessParnerDTO {
+@AllArgsConstructor
+public class BusinessPartnerApiDTO {
 
     @NotEmpty
     private Long cardCode;
     @NotEmpty
-    private String createdAt;
-    @Setter
+    private String createdAt;//No service, converter essa String em DateTime
     @NotEmpty
-    private String cardName;
+    @JsonProperty("CardName")
+    private String cardname;
     @NotEmpty
     private String avatar;
     @NotEmpty
+    @JsonProperty("Address")
     private String address;
     @NotEmpty
-    private String zipCode;
+    @JsonProperty("ZipCode")
+    private String zipcode;
     private String marca;
     private String modelo;
     private Integer ano;
-
-    public BusinessPartnerEntity toEntity() {
-        return new BusinessPartnerEntity(this.cardCode, this.createdAt, this.cardName, this.avatar, this.address, this.zipCode, this.marca, this.modelo, this.ano);
-    }
 
 }
