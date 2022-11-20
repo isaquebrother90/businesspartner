@@ -1,4 +1,5 @@
 package br.com.businesspart.app.config;
+
 import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;

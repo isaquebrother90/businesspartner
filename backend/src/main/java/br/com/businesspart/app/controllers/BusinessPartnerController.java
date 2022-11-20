@@ -44,4 +44,10 @@ public class BusinessPartnerController {
     public ResponseEntity<BusinessPartnerDTORequest> store(@PathVariable Long id, @RequestBody @Valid BusinessPartnerDTORequest dtoRequest) {
         return ResponseEntity.ok(service.update(id, dtoRequest));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BusinessPartnerDTORequest> destroy(@PathVariable Long id) {
+        service.destroy(id);
+        return ResponseEntity.noContent().build();
+    }
 }

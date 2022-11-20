@@ -4,10 +4,12 @@ import br.com.businesspart.app.dtos.BusinessPartnerApiDTO;
 import br.com.businesspart.app.dtos.response.BusinessPartnerDTOResponse;
 import br.com.businesspart.app.dtos.request.BusinessPartnerDTORequest;
 import br.com.businesspart.app.entities.BusinessPartnerEntity;
+import br.com.businesspart.app.exceptionhandlers.PartnerNotFoundException;
 import br.com.businesspart.app.repositories.BusinessPartnerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +26,7 @@ public class BusinessPartnerService {
 
     public BusinessPartnerEntity validatedById(Long id) {
         Optional<BusinessPartnerEntity> obj = repository.findById(id);
-        obj.orElseThrow(() -> new RuntimeException("partner was not found with this id."));
+        obj.orElseThrow(PartnerNotFoundException::new);
         return obj.get();
     }
 
@@ -32,10 +34,15 @@ public class BusinessPartnerService {
         return toDTORequest(repository.save(toEntity(dtoRequest)));
     }
 
-    public BusinessPartnerDTORequest update(Long id, BusinessPartnerDTORequest dtoRequest) {
+    public BusinessPartnerDTORequest update(@NotNull Long id, BusinessPartnerDTORequest dtoRequest) {
         BusinessPartnerEntity entity = this.validatedById(id);
         this.repository.findByCardCode(entity.getCardCode()).get().setCardname(dtoRequest.getCardname());
         return toDTORequest(repository.save(entity));
+    }
+
+    public void destroy(@NotNull Long id) {
+        BusinessPartnerEntity entity = this.validatedById(id);
+        repository.delete(entity);
     }
 
     public BusinessPartnerEntity toEntity(BusinessPartnerDTOResponse dto) {
@@ -98,7 +105,7 @@ public class BusinessPartnerService {
         return dtoRequest;
     }
 
-    public List<BusinessPartnerDTOResponse> consumePartnersApi(){
+    public List<BusinessPartnerDTOResponse> consumePartnersApi() {
         String url = "https://637283b2348e947299f77e08.mockapi.io/b1s/v2/BusinessPartners";
         RestTemplate restTemplate = new RestTemplate();
         BusinessPartnerApiDTO[] arrayBusinessPartnerApiDTOS = restTemplate.getForObject(url, BusinessPartnerApiDTO[].class);
@@ -107,7 +114,7 @@ public class BusinessPartnerService {
         responseList.forEach(item -> {
             BusinessPartnerEntity businessPartnerEntity = new BusinessPartnerEntity();
             businessPartnerEntity.setCardCode(item.getCardCode());
-            if(item.getCreatedAt().contains("Z")) {
+            if (item.getCreatedAt().contains("Z")) {
                 Instant instant = Instant.parse(item.getCreatedAt());
                 businessPartnerEntity.setCreatedAt(instant);
             } else {
@@ -130,14 +137,13 @@ public class BusinessPartnerService {
         return dtoList;
     }
 
-    public List<BusinessPartnerDTOResponse> findAllPartners(){
+    public List<BusinessPartnerDTOResponse> findAllPartners() {
         List<BusinessPartnerEntity> entityList = repository.findAll();
         List<BusinessPartnerDTOResponse> dtoList = entityList.stream().map(x -> new BusinessPartnerDTOResponse(x)).toList();
         return dtoList;
     }
 
-    public BusinessPartnerDTOResponse findById(Long id) {
-        BusinessPartnerEntity entity = repository.findByCardCode(id).get();// .findById(id).get();
+    public BusinessPartnerDTOResponse findById(@NotNull Long id) {
         return toDTO(this.validatedById(id));
         //return toDTO(entity);//.orElseThrow(() -> new RuntimeException("partner was not found with this id."))); //orElseThrow(() -> new EmployeeNotFoundException(id));
     }
