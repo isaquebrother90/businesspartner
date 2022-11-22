@@ -1,10 +1,7 @@
 package br.com.businesspart.app.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -17,6 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class BusinessPartnerEntity implements Serializable {
 
     @Column(name = "created_at")
@@ -36,6 +34,7 @@ public class BusinessPartnerEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "card_code")
+    @JsonProperty("CardCode")
     private Long cardCode;
 
     private String marca;

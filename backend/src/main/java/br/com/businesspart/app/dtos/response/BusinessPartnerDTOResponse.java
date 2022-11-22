@@ -16,10 +16,7 @@ import java.time.Instant;
 @AllArgsConstructor
 public class BusinessPartnerDTOResponse {
     @NotEmpty
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    //@JsonIgnore
     private Instant createdAt = Instant.now();
-
     @NotEmpty
     @JsonProperty("CardName")
     private String cardname;
@@ -31,7 +28,7 @@ public class BusinessPartnerDTOResponse {
     @NotEmpty
     @JsonProperty("ZipCode")
     private String zipcode;
-
+    @JsonProperty("CardCode")
     private Long cardCode;
     private String marca;
     private String modelo;

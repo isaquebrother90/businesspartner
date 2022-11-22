@@ -3,6 +3,7 @@ package br.com.businesspart.app.controllers;
 import br.com.businesspart.app.dtos.response.BusinessPartnerDTOResponse;
 import br.com.businesspart.app.dtos.request.BusinessPartnerDTORequest;
 import br.com.businesspart.app.services.BusinessPartnerService;
+import com.sun.xml.bind.v2.TODO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,8 @@ public class BusinessPartnerController {
         this.service = service;
     }
 
+    /*Excluir esse endpoint /consume antes de finalizar projeto. É usado nesse momento apenas para testes.
+      Excluir essa request da collection do Postman também.*/
     @GetMapping(value = "/consume")
     public ResponseEntity<List<BusinessPartnerDTOResponse>> consumePartners() {
         return ResponseEntity.ok(service.consumePartnersApi());

@@ -11,10 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class BusinessPartnerService {
@@ -106,9 +103,9 @@ public class BusinessPartnerService {
     }
 
     public List<BusinessPartnerDTOResponse> consumePartnersApi() {
-        String url = "https://637283b2348e947299f77e08.mockapi.io/b1s/v2/BusinessPartners";
+        String baseUrl = "https://637283b2348e947299f77e08.mockapi.io/b1s/v2/BusinessPartners";
         RestTemplate restTemplate = new RestTemplate();
-        BusinessPartnerApiDTO[] arrayBusinessPartnerApiDTOS = restTemplate.getForObject(url, BusinessPartnerApiDTO[].class);
+        BusinessPartnerApiDTO[] arrayBusinessPartnerApiDTOS = restTemplate.getForObject(baseUrl, BusinessPartnerApiDTO[].class);
         List<BusinessPartnerApiDTO> responseList = Arrays.asList(arrayBusinessPartnerApiDTOS);
         List<BusinessPartnerEntity> deParaList = new ArrayList<>();
         responseList.forEach(item -> {
@@ -122,10 +119,11 @@ public class BusinessPartnerService {
                 Instant instant = Instant.parse(concat);
                 businessPartnerEntity.setCreatedAt(instant);
             }
-            businessPartnerEntity.setCardname(item.getCardname());
+
+            businessPartnerEntity.setCardname(item.getCardName());
             businessPartnerEntity.setAvatar(item.getAvatar());
             businessPartnerEntity.setAddress(item.getAddress());
-            businessPartnerEntity.setZipcode(item.getZipcode());
+            businessPartnerEntity.setZipcode(item.getZipCode());
             businessPartnerEntity.setMarca(item.getMarca());
             businessPartnerEntity.setModelo(item.getModelo());
             businessPartnerEntity.setAno(item.getAno());
@@ -135,17 +133,22 @@ public class BusinessPartnerService {
         List<BusinessPartnerDTOResponse> dtoList = deParaList.stream().map(x -> new BusinessPartnerDTOResponse(x)).toList();
 
         return dtoList;
+
     }
 
     public List<BusinessPartnerDTOResponse> findAllPartners() {
         List<BusinessPartnerEntity> entityList = repository.findAll();
-        List<BusinessPartnerDTOResponse> dtoList = entityList.stream().map(x -> new BusinessPartnerDTOResponse(x)).toList();
-        return dtoList;
+        if (entityList.isEmpty()) {
+            return consumePartnersApi();
+        } else {
+            List<BusinessPartnerDTOResponse> dtoList = entityList.stream().map(x -> new BusinessPartnerDTOResponse(x)).toList();
+            return dtoList;
+        }
+        //List<BusinessPartnerEntity> entityList = repository.findAll();
     }
 
     public BusinessPartnerDTOResponse findById(@NotNull Long id) {
         return toDTO(this.validatedById(id));
-        //return toDTO(entity);//.orElseThrow(() -> new RuntimeException("partner was not found with this id."))); //orElseThrow(() -> new EmployeeNotFoundException(id));
     }
 
 }
